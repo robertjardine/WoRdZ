@@ -26,7 +26,7 @@ public class WordsDriver {
                 System.out.println("NEW GAME");
                 System.out.println(pool.printOut());
                 System.out.println("There are " + pool.poolSize() + " letters remaining");
-            } else if(pool.getGiveup() == true){
+            } else if(pool.getGiveup()){
                 pool.setGiveup(false);
                 pool = new Words();
                 System.out.println("NEW GAME");
@@ -57,7 +57,11 @@ public class WordsDriver {
                 System.out.println("Would you like to play again? (y/n)");
                 Scanner input = new Scanner(System.in);
                 String playAgain = input.next();
-                if(playAgain.equals("n")){
+                while((!playAgain.equalsIgnoreCase("y")) || (!playAgain.equalsIgnorecase("n"))){
+                    System.out.println("Invalid entry. Please enter 'y' to play again, or 'n' to quit.");
+                    playAgain = input.next();
+                }
+                if(playAgain.equalsIgnoreCase("n")){
                     //Break from loop and end program
                     System.out.println("Thank You For Playing!");
                     //break from while loop
@@ -69,18 +73,18 @@ public class WordsDriver {
                 boolean inDict = pool.inDict(toLowerCase);
                 boolean inPool = pool.inPool(toLowerCase);
                 //Check that letters are in the letterPool
-                if(inPool==false){
+                if(!inPool){
                     System.out.println("The Characters Entered Are Not Valid");
                 }
 
                 //Check if in Dictionary
-                if(inDict == false){
+                if(!inDict){
                     System.out.println("The Word Entered Was Not Found in the Dictionary");
                 }
 
                 //Delete letters from letterPool
                 if(inPool && inDict){
-                    if(pool.isEmpty()==true){
+                    if(pool.isEmpty()){
                         System.out.println("NO LETTERS REMAINING");
                     }
 
