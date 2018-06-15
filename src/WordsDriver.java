@@ -15,27 +15,22 @@ import java.util.Scanner;
  */
 
 public class WordsDriver {
+
     public static void main(String[] args) throws FileNotFoundException {
 
         String userInput;
         Words pool = new Words();
 
-        while(true){
-            //Create pool of playable letters and display to user
-            if(pool.getRounds()==0){
+        while (true) {
+            if (pool.getRounds() == 0) {
                 System.out.println("NEW GAME");
-                System.out.println(pool.printOut());
-                System.out.println("There are " + pool.poolSize() + " letters remaining");
-            } else if(pool.getGiveup() == true){
+            } else if(pool.getGiveup()) {
                 pool.setGiveup(false);
                 pool = new Words();
                 System.out.println("NEW GAME");
-                System.out.println(pool.printOut());
-                System.out.println("There are " + pool.poolSize() + " letters remaining");
-            } else {
-                System.out.println(pool.printOut());
-                System.out.println("There are " + pool.poolSize() + " letters remaining");
             }
+            System.out.println(pool.printOut());
+            System.out.println("There are " + pool.poolSize() + " letters remaining");
 
             //Ask for user to input word
             System.out.println("*****************************************");
@@ -48,7 +43,7 @@ public class WordsDriver {
             String toLowerCase = userInput.toLowerCase();
 
             //Give - Up
-            if(toLowerCase.equals("**")){
+            if (toLowerCase.equals("**")) {
                 //Ask if they want to play another game
                 pool.setGiveup(true);
                 pool.addRound();
@@ -57,34 +52,20 @@ public class WordsDriver {
                 System.out.println("Would you like to play again? (y/n)");
                 Scanner input = new Scanner(System.in);
                 String playAgain = input.next();
-                if(playAgain.equals("n")){
+                if (playAgain.equals("n")) {
                     //Break from loop and end program
                     System.out.println("Thank You For Playing!");
                     //break from while loop
                     break;
                 }
             } else {
-                //User Interaction
-                //Make sure valid, playable word before adding points and deleting letters
-                boolean inDict = pool.inDict(toLowerCase);
-                boolean inPool = pool.inPool(toLowerCase);
-                //Check that letters are in the letterPool
-                if(inPool==false){
-                    System.out.println("The Characters Entered Are Not Valid");
-                }
+                boolean validWord = isInDictionaryAndPool(pool, toLowerCase);
 
-                //Check if in Dictionary
-                if(inDict == false){
-                    System.out.println("The Word Entered Was Not Found in the Dictionary");
-                }
-
-                //Delete letters from letterPool
-                if(inPool && inDict){
-                    if(pool.isEmpty()==true){
+                if (validWord) {
+                    if (pool.isEmpty()) {
                         System.out.println("NO LETTERS REMAINING");
                     }
 
-                    //Keep track of score and Display it
                     pool.deleteLetters(toLowerCase);
                     System.out.println("Your Current Score Is: " + pool.getScore());
                     pool.addRound();
@@ -96,5 +77,19 @@ public class WordsDriver {
             pool.setInPool(false);
             pool.setInDict(false);
         }
+    }
+
+    private static boolean isInDictionaryAndPool(Words pool, String word) {
+        boolean inDict = pool.inDict(word);
+        boolean inPool = pool.inPool(word);
+
+        if (!inPool) {
+            System.out.println("The Characters Entered Are Not Valid");
+        }
+
+        if (!inDict) {
+            System.out.println("The Word Entered Was Not Found in the Dictionary");
+        }
+        return inDict && inPool;
     }
 }

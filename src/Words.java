@@ -1,5 +1,10 @@
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+
 /**
  *
  * @author Robert Jardine
@@ -13,29 +18,32 @@ import java.util.*;
  */
 
 public class Words {
-    private final ArrayList<Character> letters;
-    private final ArrayList<String> dict;
-    private final String alpha = "aaabcdeeefghiiijklmnooopqrstuuuvwxyz";
+
+    private static final String ALPHA = "aaabcdeeefghiiijklmnooopqrstuuuvwxyz";
+
     private boolean inPool;
     private boolean inDict;
     private boolean giveup;
     private int rounds;
     private int score;
+    private List<Character> letters;
+    private List<String> dict;
 
 
-    public Words() throws FileNotFoundException{
+    public Words() throws FileNotFoundException {
         letters = new ArrayList<>();
 
         for(int i=0; i<50; i++){
             Random randNum = new Random();
             int stringIndex = randNum.nextInt(35);
-            letters.add(alpha.charAt(stringIndex));
+            letters.add(ALPHA.charAt(stringIndex));
         }
 
         dict = new ArrayList<>();
-        Scanner fileRead = new Scanner(new File("dictionary.txt"));
-        while(fileRead.hasNextLine()){
-            dict.add(fileRead.nextLine());
+        try (Scanner fileRead = new Scanner(new File("dictionary.txt"))) {
+            while (fileRead.hasNextLine()) {
+                dict.add(fileRead.nextLine());
+            }
         }
 
         giveup = false;
@@ -57,8 +65,6 @@ public class Words {
 
     public void setScore(int addScore){score += addScore;}
 
-    //public boolean getInPool(){return inPool;}
-
     public void setInPool(boolean bool){inPool = bool;}
 
     public boolean getInDict(){return inDict;}
@@ -67,22 +73,13 @@ public class Words {
 
 
     public boolean inDict(String userInput){
-        boolean result;
-        String toLowerCase = userInput.toLowerCase();
-        if(dict.contains(toLowerCase) == false)
-        {
-            result = false;
-        } else {
-            result = true;
-        }
-        return result;
+       return  dict.contains(userInput.toLowerCase());
     }
 
     public boolean inPool(String userInput){
-        //Check that letters are in the letterPool
         for(int i=0; i<userInput.length(); i++){
-            for(int j=0; j<letters.size(); j++){
-                if(userInput.charAt(i) != (Character.toLowerCase(letters.get(j)))){
+            for(char letter : letters){
+                if(userInput.charAt(i) != (Character.toLowerCase(letter))){
                     inPool = false;
                 } else {
                     inPool = true;
@@ -98,10 +95,6 @@ public class Words {
 
     public void deleteLetters(String userInput){
         for(int j=0; j<userInput.length(); j++){
-            //System.out.println(Character.toUpperCase((Character)userInput.charAt(j)));
-            // char letter = (Character)userInput.charAt(j);
-            // char upperLetter = Character.toUpperCase(letter);
-            // System.out.println(letter + " " + upperLetter);
             letters.remove((Character)userInput.charAt(j));
             score++;
         }
@@ -109,7 +102,7 @@ public class Words {
 
     public boolean isEmpty(){return letters.isEmpty();}
 
-    public ArrayList<Character> printOut(){
+    public List<Character> printOut(){
         return letters;
     }
 }
